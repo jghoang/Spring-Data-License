@@ -4,107 +4,94 @@ import java.util.Date;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "persons")
+@Entity // sets class as DB object
+@Table(name="persons") // DB table object belongs
 public class Person {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	// <----- Attributes ----->
+	@Id // sets table id for SQL
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increments
 	private Long id;
 	private String firstName;
 	private String lastName;
-	@Column(updatable = false)
+	@Column(updatable=false) // attribute is immutable after creation
 	private Date createdAt;
 	private Date updatedAt;
-	@OneToOne(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	
+	// Annotation for relationship -- model object attribute IS THE RELATED OBJECT!
+	// This is the Syntax for the primary object in the relationship
+	// mappedBy -- only used in the primary object. Maps License attribute in the Person class to the Person attribute in the License class
+	// cascade -- ensure referential integrity is preserved among ALL actions that use EITHER object
+	// fetch -- LAZY: fetches when needed, EAGER: fetched in all cases
+	@OneToOne(mappedBy="person", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	private License license;
-
+	
+	// <----- Constructors ----->
 	public Person() {
-
+		
 	}
 
-	/**
-	 * @return the id
-	 */
+	// <----- Getters/Setters ----->
+	// id
 	public Long getId() {
 		return id;
 	}
 
-	/**
-	 * @param id the id to set
-	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	/**
-	 * @return the firstName
-	 */
+	// firstName
 	public String getFirstName() {
 		return firstName;
 	}
 
-	/**
-	 * @param firstName the firstName to set
-	 */
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 
-	/**
-	 * @return the lastName
-	 */
+	// lastName
 	public String getLastName() {
 		return lastName;
 	}
 
-	/**
-	 * @param lastName the lastName to set
-	 */
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 
-	/**
-	 * @return the createdAt
-	 */
+	// createdAt
 	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	/**
-	 * @param createdAt the createdAt to set
-	 */
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	/**
-	 * @return the updatedAt
-	 */
+	// updatedAt
 	public Date getUpdatedAt() {
 		return updatedAt;
 	}
 
-	/**
-	 * @param updatedAt the updatedAt to set
-	 */
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 
-	/**
-	 * @return the license
-	 */
+	// License object
 	public License getLicense() {
 		return license;
 	}
 
-	/**
-	 * @param license the license to set
-	 */
 	public void setLicense(License license) {
 		this.license = license;
 	}
-
+	// <-- Methods -->
+		@PrePersist
+		protected void onCreate() {
+			this.createdAt = new Date();
+		}
+		
+		@PreUpdate
+		protected void onUpdate() {
+			this.updatedAt = new Date();
+		}
 }

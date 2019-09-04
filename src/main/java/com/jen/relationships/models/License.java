@@ -4,26 +4,36 @@ import java.util.Date;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "licenses")
+import org.springframework.format.annotation.DateTimeFormat;
+
+@Entity // sets class as DB object
+@Table(name="licenses") // DB table object belongs
 public class License {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	// <----- Attributes ----->
+	@Id // sets table id for SQL
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increments
 	private Long id;
 	private String number;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")  // Proper formatting from web form
 	private Date expirationDate;
 	private String state;
-	@Column(updatable = false)
+	@Column(updatable=false) // attribute is immutable after creation
 	private Date createdAt;
 	private Date updatedAt;
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "person_id")
+	
+	// Annotation for relationship -- model object attribute IS THE RELATED OBJECT!
+	// This is the Syntax for the secondary object in the relationship
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="person_id") // Maps foreign keys
 	private Person person;
-
+	
+	// <----- Constructors ----->
 	public License() {
-
+		
 	}
 
+	// <----- Getters/Setters ----->
+	// id
 	public Long getId() {
 		return id;
 	}
@@ -32,6 +42,7 @@ public class License {
 		this.id = id;
 	}
 
+	// number
 	public String getNumber() {
 		return number;
 	}
@@ -40,6 +51,7 @@ public class License {
 		this.number = number;
 	}
 
+	// expirationDate
 	public Date getExpirationDate() {
 		return expirationDate;
 	}
@@ -48,6 +60,7 @@ public class License {
 		this.expirationDate = expirationDate;
 	}
 
+	// state
 	public String getState() {
 		return state;
 	}
@@ -56,6 +69,7 @@ public class License {
 		this.state = state;
 	}
 
+	// createdAt
 	public Date getCreatedAt() {
 		return createdAt;
 	}
@@ -64,6 +78,7 @@ public class License {
 		this.createdAt = createdAt;
 	}
 
+	// updatedAt
 	public Date getUpdatedAt() {
 		return updatedAt;
 	}
@@ -72,6 +87,7 @@ public class License {
 		this.updatedAt = updatedAt;
 	}
 
+	// Person object
 	public Person getPerson() {
 		return person;
 	}
@@ -79,5 +95,15 @@ public class License {
 	public void setPerson(Person person) {
 		this.person = person;
 	}
-
+	
+	// <-- Methods -->
+		@PrePersist
+		protected void onCreate() {
+			this.createdAt = new Date();
+		}
+		
+		@PreUpdate
+		protected void onUpdate() {
+			this.updatedAt = new Date();
+		}
 }
